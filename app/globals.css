@@ -1,26 +1,68 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+*{
+  box-sizing: border-box;
+  scrollbar-width: thin;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@theme {
+  /* layout*/
+  --color-bg: #0b0f17;
+  --color-panel: #0f1624;
+  --color-panel-2: #0c1320;
+  --color-border: rgba(255, 255, 255, 0.10);
+  --color-muted: rgba(255, 255, 255, 0.70);
+  --color-muted-2: rgba(255, 255, 255, 0.55);
+  --color-accent: #7c3aed;
+  --color-accent-2: #22c55e;
+  --color-danger: #ef4444;
+
+  /* bracket*/
+  /* --color-bracket-winner: ; */
+  /* --color-bracket-loser: ; */
+
+  /*team*/
+  /* --color-team-card: ; */
+  /* --color-team-rank: ; */
+
+  /*round*/
+  /* --color-round-card: ; */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+
+
+html,
+body {
+  height: 100%;
+}
+
+::selection {
+  background: rgba(124, 58, 237, 0.35);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-bg text-white;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+/* tailwind-подобный CSS */
+.scrollbar-custom {
+  scrollbar-width: thin;           /* Firefox */
+  scrollbar-color: #888 #222;     /* Firefox: thumb и track */
+}
+
+/* WebKit (Chrome, Safari, Edge) */
+.scrollbar-custom::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: #222;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 5px;
+  border: 2px solid #222; /* имитация отступа */
 }
