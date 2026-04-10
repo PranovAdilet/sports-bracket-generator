@@ -1,5 +1,5 @@
-export * from "./ui/bracket-constructor";
-export * from "./ui/bracket-canvas";
-export * from "./ui/bracket-sidebar";
-export * from "./ui/match-node";
+export {BracketConstructor} from "./ui/bracket-constructor";
+export * from "./ui/canvas";
+export * from "./ui/sidebar";
+export * from "./ui/canvas/nodes/match-node";
 

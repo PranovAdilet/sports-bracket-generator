@@ -1,47 +1,18 @@
 "use client";
 
-import {
-  BRACKET_SIZES,
-  MATCH_FORMATS,
-  SEEDING_TYPES,
-  TOURNAMENT_TYPES,
-} from "@/widgets/bracket-constructor/model/options";
-import { useState } from "react";
-import {
-  TournamentDetailsSection,
-  TournamentDetailsSectionValue,
-} from "./sections/tournament-details-section";
-import {
-  TournamentFormatSection,
-  TournamentFormatSectionValue,
-} from "./sections/tournament-format-section";
-import {
-  TournamentParticipantsSection,
-  TournamentParticipantsSectionValue,
-} from "./sections/tournament-participants-section";
-import {
-  TournamentExportSection,
-  TournamentExportSectionValue,
-} from "./sections/tournament-export-section";
+import { Dispatch, SetStateAction } from "react";
+import { TournamentDetailsSection } from "./sections/tournament-details-section";
+import { TournamentFormatSection } from "./sections/tournament-format-section";
+import { TournamentParticipantsSection } from "./sections/tournament-participants-section";
+import { TournamentExportSection } from "./sections/tournament-export-section";
+import { TournamentBracketFormData } from "../../model/types";
 
-type TournamentBracketFormData = TournamentDetailsSectionValue &
-  TournamentFormatSectionValue &
-  TournamentParticipantsSectionValue &
-  TournamentExportSectionValue;
+type Props = {
+  formData: TournamentBracketFormData;
+  setFormData: Dispatch<SetStateAction<TournamentBracketFormData>>;
+};
 
-export const BracketSidebar = () => {
-  const [formData, setFormData] = useState<TournamentBracketFormData>({
-    tournamentName: "",
-    game: "",
-    season: new Date(),
-    location: "",
-    tournamentType: TOURNAMENT_TYPES[0].value,
-    bracketSize: BRACKET_SIZES[0].value,
-    matchFormat: MATCH_FORMATS[0].value,
-    seeding: SEEDING_TYPES[0].value,
-    thirdPlaceMatch: false,
-    byeSlots: true,
-  });
+export const BracketSidebar = ({ formData, setFormData }: Props) => {
   return (
     <aside className="border-b lg:border-b-0 lg:border-r border-border bg-panel/40 flex flex-col h-full overflow-hidden">
       <div className="flex-1 overflow-auto p-4 md:p-5 space-y-4 scrollbar-custom">
@@ -66,7 +37,9 @@ export const BracketSidebar = () => {
           onChange={(patch) => setFormData((prev) => ({ ...prev, ...patch }))}
         />
         <TournamentParticipantsSection
-          value={{}}
+          value={{
+            teams: formData.teams,
+          }}
           onChange={(patch) => setFormData((prev) => ({ ...prev, ...patch }))}
         />
       </div>
