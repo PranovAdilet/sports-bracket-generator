@@ -2,33 +2,34 @@
 
 import { cn } from "@/shared/lib";
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
-export type Option = {
+export type Option<TValue> = {
   label: string;
-  value: string;
+  value: TValue;
   disabled?: boolean;
 };
 
-type SelectProps = {
-  options: Option[];
-  value?: string;
-  onChange?: (value: string) => void;
+type SelectProps<TValue> = {
+  options: Option<TValue>[];
+  value: TValue;
+  onChange?: (value: TValue) => void;
   placeholder?: string;
   className?: string;
 };
 
-export function Select({
+export function Select<TValue>({
   options,
   value,
   onChange,
   placeholder = "Select...",
   className,
-}: SelectProps) {
+}: SelectProps<TValue>) {
   const [open, setOpen] = useState(false);
 
-  const selected = options.find((o) => o.value === value);
-
+  const selected = useMemo(() => {
+    return options.find((option) => option.value === value);
+  }, [options, value]);
   return (
     <div className={cn("relative", className)}>
       {/* Trigger */}
@@ -66,16 +67,16 @@ export function Select({
           )}
         >
           <div className="p-1">
-            {options.map((option) => {
+            {options.map((option, index) => {
               const isActive = option.value === value;
               const isDisabled = option.disabled;
 
               return (
                 <button
-                  key={option.value}
+                  key={index}
                   disabled={isDisabled}
                   onClick={() => {
-                    onChange?.(option.value);
+                    onChange?.(option.value as TValue);
                     setOpen(false);
                   }}
                   className={cn(

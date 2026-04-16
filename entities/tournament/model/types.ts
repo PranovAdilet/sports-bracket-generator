@@ -28,7 +28,7 @@ export type Match = {
     team1: Team | null;
     team2: Team | null;
   
-    score: {
+    score?: {
       team1: number;
       team2: number;
     };
@@ -37,7 +37,10 @@ export type Match = {
   
     nextMatchId?: string;
     status: "pending" | "finished";
-    position?: 1 | 2;   // для линий в UI
+    position: {
+      x: number
+      y: number
+    }
     bestOf: 3 | 5;
   };
 

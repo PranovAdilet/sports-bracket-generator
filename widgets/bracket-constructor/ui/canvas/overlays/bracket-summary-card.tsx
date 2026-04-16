@@ -1,6 +1,6 @@
 "use client";
 
-import { TournamentBracketFormData } from "../../../model/types";
+import { TournamentBracketFormData } from "@/widgets/bracket-constructor/model/types";
 
 function formatSeason(season: TournamentBracketFormData["season"]) {
   if (!season) return "—";

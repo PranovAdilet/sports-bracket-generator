@@ -1,17 +1,12 @@
 "use client";
-import {
-  ReactNode,
-  RefObject,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Match } from "@/entities/tournament";
+import { ReactNode, useMemo } from "react";
 
-export type MatchId = "m1" | "m2" | "m3" | "m4" | "sf1" | "sf2" | "final";
-type MatchLink = { from: MatchId; to: MatchId };
+// export type MatchId = "m1" | "m2" | "m3" | "m4" | "sf1" | "sf2" | "final";
+// type MatchLink = { from: MatchId; to: MatchId };
 type Point = { x: number; y: number };
 type SegmentPath = { d: string; key: string };
+type MatchLink = { from: string; to: string };
 
 function orthogonalPath(from: Point, to: Point, midX: number) {
   // M from -> H midX -> V to.y -> H to.x
@@ -20,85 +15,81 @@ function orthogonalPath(from: Point, to: Point, midX: number) {
 
 type Props = {
   children: ReactNode;
-  nodeRefs: RefObject<Map<MatchId, HTMLDivElement>>;
+  matches: Match[];
 };
 
-export const BracketConnections = ({ children, nodeRefs }: Props) => {
-  const contentRef = useRef<HTMLDivElement | null>(null);
-  const [paths, setPaths] = useState<SegmentPath[]>([]);
+export const BracketConnections = ({ children, matches }: Props) => {
+  const NODE_WIDTH = 280;
+  const NODE_HEIGHT = 140;
+  const canvasSize = useMemo(() => {
+    const MIN_WIDTH = 1500;
+    const MIN_HEIGHT = 720;
+    const PADDING = 80;
+
+    const maxX = matches.reduce(
+      (acc, match) => Math.max(acc, match.position.x + NODE_WIDTH),
+      0,
+    );
+    const maxY = matches.reduce(
+      (acc, match) => Math.max(acc, match.position.y + NODE_HEIGHT),
+      0,
+    );
+
+    return {
+      width: Math.max(MIN_WIDTH, maxX + PADDING),
+      height: Math.max(MIN_HEIGHT, maxY + PADDING),
+    };
+  }, [matches]);
 
   const links = useMemo<MatchLink[]>(
-    () => [
-      { from: "m1", to: "sf1" },
-      { from: "m2", to: "sf1" },
-      { from: "m3", to: "sf2" },
-      { from: "m4", to: "sf2" },
-      { from: "sf1", to: "final" },
-      { from: "sf2", to: "final" },
-    ],
-    [],
+    () =>
+      matches.flatMap((match) =>
+        match.nextMatchId ? [{ from: match.id, to: match.nextMatchId }] : [],
+      ),
+    [matches],
   );
 
-  useLayoutEffect(() => {
-    const root = contentRef.current;
-    if (!root) return;
+  const matchById = useMemo(
+    () => new Map(matches.map((match) => [match.id, match])),
+    [matches],
+  );
+  const paths = useMemo<SegmentPath[]>(() => {
+    const nextPaths: SegmentPath[] = [];
 
-    const calc = () => {
-      const rootRect = root.getBoundingClientRect();
-      const getCenterRight = (id: MatchId): Point | null => {
-        const el = nodeRefs.current.get(id);
-        if (!el) return null;
-        const r = el.getBoundingClientRect();
-        return {
-          x: r.right - rootRect.left,
-          y: r.top - rootRect.top + r.height / 2,
-        };
+    for (const { from, to } of links) {
+      const fromMatch = matchById.get(from);
+      const toMatch = matchById.get(to);
+      if (!fromMatch || !toMatch) continue;
+
+      const fromPoint: Point = {
+        x: fromMatch.position.x + NODE_WIDTH,
+        y: fromMatch.position.y + NODE_HEIGHT / 2,
       };
-      const getCenterLeft = (id: MatchId): Point | null => {
-        const el = nodeRefs.current.get(id);
-        if (!el) return null;
-        const r = el.getBoundingClientRect();
-        return {
-          x: r.left - rootRect.left,
-          y: r.top - rootRect.top + r.height / 2,
-        };
+      const toPoint: Point = {
+        x: toMatch.position.x,
+        y: toMatch.position.y + NODE_HEIGHT / 2,
       };
+      const offset = Math.min(80, (toPoint.x - fromPoint.x) / 2);
+      const midX = fromPoint.x + offset;
+      nextPaths.push({
+        key: `${from}->${to}`,
+        d: orthogonalPath(fromPoint, toPoint, midX),
+      });
+    }
 
-      const nextPaths: SegmentPath[] = [];
-      for (const { from, to } of links) {
-        const a = getCenterRight(from);
-        const b = getCenterLeft(to);
-        if (!a || !b) continue;
-        const OFFSET = Math.min(80, (b.x - a.x) / 2);
-        const midX = a.x + OFFSET;
-        nextPaths.push({
-          key: `${from}->${to}`,
-          d: orthogonalPath(a, b, midX),
-        });
-      }
-      setPaths(nextPaths);
-    };
-
-    calc();
-
-    const ro = new ResizeObserver(() => calc());
-    ro.observe(root);
-    for (const el of nodeRefs.current.values()) ro.observe(el);
-    window.addEventListener("resize", calc);
-
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", calc);
-    };
-  }, [links, nodeRefs.current]);
+    return nextPaths;
+  }, [links, matchById]);
 
   return (
-    <div ref={contentRef} className="relative h-[720px] w-[1500px]">
+    <div
+      className="relative"
+      style={{ width: canvasSize.width, height: canvasSize.height }}
+    >
       <svg
         className="absolute inset-0 pointer-events-none"
         width="100%"
         height="100%"
-        viewBox="0 0 1500 720"
+        viewBox={`0 0 ${canvasSize.width} ${canvasSize.height}`}
         preserveAspectRatio="none"
         aria-hidden="true"
       >

@@ -19,7 +19,8 @@ export function BracketConstructor() {
     season: new Date(),
     location: "",
     tournamentType: TOURNAMENT_TYPES[0].value,
-    bracketSize: BRACKET_SIZES[0].value,
+    bracketSize: BRACKET_SIZES[0]
+      .value as TournamentBracketFormData["bracketSize"],
     matchFormat: MATCH_FORMATS[0].value,
     seeding: SEEDING_TYPES[0].value,
     thirdPlaceMatch: false,

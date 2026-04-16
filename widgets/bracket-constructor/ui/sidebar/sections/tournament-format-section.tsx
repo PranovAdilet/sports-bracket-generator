@@ -15,11 +15,14 @@ import {
   SEEDING_TYPES,
   TOURNAMENT_TYPES,
 } from "@/widgets/bracket-constructor/model/options";
+import { TournamentBracketFormData } from "@/widgets/bracket-constructor/model/types";
 import { Shuffle } from "lucide-react";
+
+type BracketSize = TournamentBracketFormData["bracketSize"];
 
 export type TournamentFormatSectionValue = {
   tournamentType: string;
-  bracketSize: string;
+  bracketSize: BracketSize;
   matchFormat: string;
   seeding: string;
   thirdPlaceMatch: boolean;
@@ -65,10 +68,10 @@ export const TournamentFormatSection = ({
 
             <Select
               options={BRACKET_SIZES}
-              value={value.bracketSize}
+              value={BRACKET_SIZES[0].value}
               onChange={(value) => {
                 onChange({
-                  bracketSize: value,
+                  bracketSize: Number(value) as BracketSize,
                 });
               }}
             />

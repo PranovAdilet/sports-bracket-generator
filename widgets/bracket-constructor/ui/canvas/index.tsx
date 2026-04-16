@@ -1,34 +1,22 @@
 "use client";
 
 import { PanZoomCanvas } from "@/shared/ui";
-import { BracketConnections, MatchId } from "./connections/bracket-connections";
-import { MatchNode } from "./nodes/match-node";
-import { useMemo, useRef } from "react";
-import { BracketSummaryCard } from "./overlays/bracket-summary-card";
-import { BracketCanvasControls } from "./controls/bracket-canvas-controls";
+import { useMemo } from "react";
+import { generateMatches } from "@/features/bracket-generation";
+import { BracketCanvasControls } from "@/features/bracket-rendering";
 import { TournamentBracketFormData } from "../../model/types";
-
-type MatchModel = { id: MatchId; title: string; x: number; y: number };
+import { BracketSummaryCard } from "./overlays/bracket-summary-card";
+import { BracketConnections } from "./connections/bracket-connections";
+import { MatchNode } from "./nodes/match-node";
 
 type Props = {
   formData: TournamentBracketFormData;
 };
 
 export const BracketCanvas = ({ formData }: Props) => {
-  const nodeRefs = useRef(new Map<MatchId, HTMLDivElement>());
-
-  const matches = useMemo<MatchModel[]>(
-    () => [
-      { id: "m1", title: "Match 1", x: 360, y: 40 },
-      { id: "m2", title: "Match 2", x: 360, y: 230 },
-      { id: "m3", title: "Match 3", x: 360, y: 420 },
-      { id: "m4", title: "Match 4", x: 360, y: 610 },
-      { id: "sf1", title: "Semifinal 1", x: 760, y: 135 },
-      { id: "sf2", title: "Semifinal 2", x: 760, y: 515 },
-      { id: "final", title: "Final", x: 1160, y: 325 },
-    ],
-    [],
-  );
+  const matches = useMemo(() => {
+    return generateMatches(formData.bracketSize, formData.teams);
+  }, [formData.bracketSize, formData.teams]);
 
   return (
     <section className="flex flex-col h-full">
@@ -45,18 +33,9 @@ export const BracketCanvas = ({ formData }: Props) => {
 
         <PanZoomCanvas className="flex-1" grid="lines">
           <BracketSummaryCard formData={formData} />
-          <BracketConnections nodeRefs={nodeRefs}>
-            {matches.map((m) => (
-              <MatchNode
-                key={m.id}
-                ref={(el) => {
-                  if (el) nodeRefs.current.set(m.id, el);
-                  else nodeRefs.current.delete(m.id);
-                }}
-                title={m.title}
-                x={m.x}
-                y={m.y}
-              />
+          <BracketConnections matches={matches}>
+            {matches.map((m, index) => (
+              <MatchNode key={m.id} match={m} index={index + 1} />
             ))}
           </BracketConnections>
         </PanZoomCanvas>

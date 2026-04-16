@@ -1,6 +1,7 @@
 "use client";
 
 import { Team } from "@/entities/tournament";
+import { showError } from "@/shared/lib";
 import { Button, Input } from "@/shared/ui";
 import { Trash2 } from "lucide-react";
 import { ChangeEvent, useState } from "react";
@@ -24,12 +25,16 @@ export const TournamentTeamCard = ({
     setName(e.target.value);
   };
   const handleTeamUpdate = () => {
+    if (name.length < 3 || name.length > 20) {
+      showError("Название команды должно быть от 3 до 20 символов");
+      return;
+    }
     const updatedTeam: Team = {
       id: team?.id ?? crypto.randomUUID(),
-      name,
+      name: name.trim(),
       ...team,
     };
-    onChange(updatedTeam, !team);
+    onChange(updatedTeam, !team?.id);
   };
   return (
     <div key={index} className="flex items-center gap-2">

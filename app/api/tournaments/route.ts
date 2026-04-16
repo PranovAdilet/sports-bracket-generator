@@ -20,7 +20,8 @@ export async function GET(req: NextRequest) {
   });
 
   // Преобразуем Prisma объекты в API типы
-  const result: Tournament[] = tournaments.map(t => ({
+  // const result: Tournament[] = tournaments.map(t => ({
+  const result = tournaments.map(t => ({
     id: t.id,
     name: t.name,
     description: t.description ?? undefined,

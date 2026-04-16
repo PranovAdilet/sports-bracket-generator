@@ -17,7 +17,8 @@ import {
 
 import { PlusIcon } from "lucide-react";
 import { TournamentTeamCard } from "./tournament-team-card";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { showError } from "@/shared/lib";
 
 export type TournamentParticipantsSectionValue = {
   teams: Team[];
@@ -55,14 +56,24 @@ export const TournamentParticipantsSection = ({
   };
 
   const handlePasteList = (text: string) => {
+    let isError = false;
     const teams: Team[] = text
       .split("\n")
       .map((line) => line.trim())
       .filter(Boolean)
-      .map((name) => ({
-        id: crypto.randomUUID(),
-        name,
-      }));
+      .map((name) => {
+        if (name.length < 3 || name.length > 20) {
+          isError = true;
+        }
+        return {
+          id: crypto.randomUUID(),
+          name,
+        };
+      });
+    if (isError) {
+      showError("Названия команд должны быть от 3 до 20 символов");
+      return;
+    }
 
     onChange({ teams });
   };
@@ -97,32 +108,11 @@ export const TournamentParticipantsSection = ({
                 />
               ))}
               <TournamentTeamCard
-                key="new-team"
+                key={value.teams.length}
                 index={value.teams.length}
                 onChange={handleUpdateTeams}
                 onRemove={handleRemoveTeam}
               />
-              {/* <div className="flex items-center gap-2">
-                <Input
-                  placeholder={`Команда ${value.teams.length + 1}`}
-                  value={newTeamName}
-                  onChange={(e) => setNewTeamName(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      addTeam();
-                    }
-                  }}
-                  onBlur={addTeam}
-                />
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label="Удалить"
-                  // onClick={() => handleRemoveTeam(index)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div> */}
               <Button
                 variant="ghost"
                 size="sm"
@@ -156,7 +146,7 @@ export const TournamentParticipantsSection = ({
                 onBlur={() => {
                   if (textareaValue !== null) {
                     handlePasteList(textareaValue);
-                    setTextareaValue(null); // 🔥 возвращаемся к source of truth
+                    setTextareaValue(null);
                   }
                 }}
               />
