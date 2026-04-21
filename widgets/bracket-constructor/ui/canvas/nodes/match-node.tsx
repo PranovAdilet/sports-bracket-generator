@@ -1,6 +1,5 @@
 import { Match } from "@/entities/tournament";
 import { cn } from "@/shared/lib";
-import { Badge } from "@/shared/ui";
 import { forwardRef } from "react";
 
 type Props = {
@@ -23,9 +22,9 @@ export const MatchNode = forwardRef<HTMLDivElement, Props>(
               <div className="truncate text-[12px] font-semibold">
                 Match {index}
               </div>
-              <div className="text-[11px] text-muted-2">BO1 • Placeholder</div>
+              {/* <div className="text-[11px] text-muted-2">BO1 • Placeholder</div> */}
             </div>
-            <Badge className="bg-white/5">R1</Badge>
+            {/* <Badge className="bg-white/5">R1</Badge> */}
           </div>
 
           <div className="px-3 pb-3 space-y-2">
@@ -34,6 +33,7 @@ export const MatchNode = forwardRef<HTMLDivElement, Props>(
                 <div className="truncate text-[12px]">
                   {match.team1?.name ?? "—"}
                 </div>
+
                 <div className="text-[11px] text-muted-2">
                   {match.team1?.description}
                 </div>
@@ -47,6 +47,7 @@ export const MatchNode = forwardRef<HTMLDivElement, Props>(
                 <div className="truncate text-[12px]">
                   {match.team2?.name ?? "—"}
                 </div>
+
                 <div className="text-[11px] text-muted-2">
                   {match.team2?.description}
                 </div>

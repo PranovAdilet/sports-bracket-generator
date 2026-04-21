@@ -183,6 +183,44 @@ export const usePanZoom = ({
         } as React.CSSProperties;
       }, [grid, t.scale, t.x, t.y]);
 
+      const zoomIn = () => {
+        setT((prev) => ({
+          ...prev,
+          scale: clamp(prev.scale * 1.1, minScale, maxScale),
+        }));
+      };
+      
+      const zoomOut = () => {
+        setT((prev) => ({
+          ...prev,
+          scale: clamp(prev.scale / 1.1, minScale, maxScale),
+        }));
+      };
+      const reset = () => {
+        setT({
+          x: initialX,
+          y: initialY,
+          scale: clamp(initialScale, minScale, maxScale),
+        });
+      };
+      const fit = ({ width, height, x, y }: { width: number; height: number; x: number; y: number }) => {
+        const el = rootRef.current;
+        if (!el) return;
+      
+        const rect = el.getBoundingClientRect();
+      
+        const scale = Math.min(
+          rect.width / width,
+          rect.height / height,
+        );
+      
+        setT({
+          x: (rect.width - width * scale) / 2 - x * scale,
+          y: (rect.height - height * scale) / 2 - y * scale,
+          scale,
+        });
+      };
+
       return {
         t,
         rootRef,
@@ -193,5 +231,9 @@ export const usePanZoom = ({
         onPointerUp,
         onWheel,
         onPointerCancel: onPointerUp,
+        zoomIn,
+        zoomOut,
+        reset,
+        fit
       }
 }

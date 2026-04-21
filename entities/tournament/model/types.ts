@@ -29,8 +29,8 @@ export type Match = {
     team2: Team | null;
   
     score?: {
-      team1: number;
-      team2: number;
+      team1: number | null;
+      team2: number | null;
     };
   
     winner: Team | null;

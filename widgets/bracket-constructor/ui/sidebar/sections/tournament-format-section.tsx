@@ -68,10 +68,10 @@ export const TournamentFormatSection = ({
 
             <Select
               options={BRACKET_SIZES}
-              value={BRACKET_SIZES[0].value}
+              value={value.bracketSize}
               onChange={(value) => {
                 onChange({
-                  bracketSize: Number(value) as BracketSize,
+                  bracketSize: value as BracketSize,
                 });
               }}
             />

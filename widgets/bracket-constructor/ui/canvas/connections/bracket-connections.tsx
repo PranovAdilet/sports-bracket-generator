@@ -1,5 +1,5 @@
 "use client";
-import { Match } from "@/entities/tournament";
+import { Match, NODE_HEIGHT, NODE_WIDTH } from "@/entities/tournament";
 import { ReactNode, useMemo } from "react";
 
 // export type MatchId = "m1" | "m2" | "m3" | "m4" | "sf1" | "sf2" | "final";
@@ -16,31 +16,14 @@ function orthogonalPath(from: Point, to: Point, midX: number) {
 type Props = {
   children: ReactNode;
   matches: Match[];
+  canvasSize: { width: number; height: number };
 };
 
-export const BracketConnections = ({ children, matches }: Props) => {
-  const NODE_WIDTH = 280;
-  const NODE_HEIGHT = 140;
-  const canvasSize = useMemo(() => {
-    const MIN_WIDTH = 1500;
-    const MIN_HEIGHT = 720;
-    const PADDING = 80;
-
-    const maxX = matches.reduce(
-      (acc, match) => Math.max(acc, match.position.x + NODE_WIDTH),
-      0,
-    );
-    const maxY = matches.reduce(
-      (acc, match) => Math.max(acc, match.position.y + NODE_HEIGHT),
-      0,
-    );
-
-    return {
-      width: Math.max(MIN_WIDTH, maxX + PADDING),
-      height: Math.max(MIN_HEIGHT, maxY + PADDING),
-    };
-  }, [matches]);
-
+export const BracketConnections = ({
+  children,
+  matches,
+  canvasSize,
+}: Props) => {
   const links = useMemo<MatchLink[]>(
     () =>
       matches.flatMap((match) =>
