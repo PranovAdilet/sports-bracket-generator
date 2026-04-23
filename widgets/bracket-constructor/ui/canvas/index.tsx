@@ -34,7 +34,6 @@ export const BracketCanvas = ({ formData }: Props) => {
       (acc, match) => Math.max(acc, match.position.y + NODE_HEIGHT),
       0,
     );
-
     return {
       width: Math.max(MIN_WIDTH, maxX + PADDING),
       height: Math.max(MIN_HEIGHT, maxY + PADDING),
@@ -47,9 +46,6 @@ export const BracketCanvas = ({ formData }: Props) => {
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <div className="text-[13px] text-muted-2">Preview</div>
-            <div className="truncate text-[15px] font-semibold">
-              Pan: drag empty space • Zoom: wheel • Reset: 0
-            </div>
           </div>
           <BracketCanvasControls
             onZoomIn={() => panZoomRef.current?.zoomIn()}
