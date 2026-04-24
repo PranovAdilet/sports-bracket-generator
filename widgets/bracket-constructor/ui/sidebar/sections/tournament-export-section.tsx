@@ -29,9 +29,7 @@ export const TournamentExportSection = ({
           <Download className="h-4 w-4 text-white/85" />
           Экспорт
         </CardTitle>
-        <CardDescription>
-          Скачивание сетки/данных (подключишь позже).
-        </CardDescription>
+        <CardDescription>Скачивание сетки/данных</CardDescription>
       </CardHeader>
       <CardContent className="grid grid-cols-2 gap-2">
         <Button variant="secondary" size="sm">
